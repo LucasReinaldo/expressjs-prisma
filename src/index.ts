@@ -1,16 +1,14 @@
 import { PrismaClient } from "@prisma/client";
-import express from "express";
+import express, { Express, Request, RequestHandler, Response } from 'express';
 
 const prisma = new PrismaClient();
 
-const app = express();
+const app: Express = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(express.raw({ type: "application/vnd.custom-type" }));
-app.use(express.text({ type: "text/html" }));
+app.use(express.json() as RequestHandler);
 
-app.get("/todos", async (req, res) => {
+app.get("/todos", async (req: Request, res: Response) => {
   const todos = await prisma.todo.findMany({
     orderBy: { createdAt: "desc" },
   });
@@ -18,7 +16,7 @@ app.get("/todos", async (req, res) => {
   res.json(todos);
 });
 
-app.post("/todos", async (req, res) => {
+app.post("/todos", async (req: Request, res: Response) => {
   const todo = await prisma.todo.create({
     data: {
       completed: false,
@@ -30,7 +28,7 @@ app.post("/todos", async (req, res) => {
   return res.json(todo);
 });
 
-app.get("/todos/:id", async (req, res) => {
+app.get("/todos/:id", async (req: Request, res: Response) => {
   const id = req.params.id;
   const todo = await prisma.todo.findUnique({
     where: { id },
@@ -39,7 +37,7 @@ app.get("/todos/:id", async (req, res) => {
   return res.json(todo);
 });
 
-app.put("/todos/:id", async (req, res) => {
+app.put("/todos/:id", async (req: Request, res: Response) => {
   const id = req.params.id;
   const todo = await prisma.todo.update({
     where: { id },
@@ -49,7 +47,7 @@ app.put("/todos/:id", async (req, res) => {
   return res.json(todo);
 });
 
-app.delete("/todos/:id", async (req, res) => {
+app.delete("/todos/:id", async (req: Request, res: Response) => {
   const id = req.params.id;
   await prisma.todo.delete({
     where: { id },
@@ -58,7 +56,7 @@ app.delete("/todos/:id", async (req, res) => {
   return res.send({ status: "ok" });
 });
 
-app.get("/", async (req, res) => {
+app.get("/", async (req: Request, res: Response) => {
   res.send(
     `
   <h1>Todo REST API</h1>
